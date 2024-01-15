@@ -1,0 +1,91 @@
+name: "Ipo results : Family"
+
+on:
+  workflow_dispatch:
+    inputs:
+      IPONUMBER:
+        description: Choose number of ipo result 
+        required: true
+        default: "10"
+
+jobs:
+
+  Ipo_results_me:
+    name: Self
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          spec: cypress/e2e/ipoResults.cy.js
+        env:
+          CYPRESS_USERNAME: ${{ secrets.ME_USERNAME }}
+          CYPRESS_DP: ${{ secrets.ME_DPID }}
+          CYPRESS_PASSWORD: ${{ secrets.ME_PASSWORD }}
+          CYPRESS_IPONUMBER: ${{ github.event.inputs.IPONUMBER }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      - name: Save screenshot
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshot
+          path: cypress/screenshots
+          retention-days: 10
+
+  Ipo_results_dad:
+    name: Dad
+    needs: [Ipo_results_me]
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          spec: cypress/e2e/ipoResults.cy.js
+        env:
+          CYPRESS_USERNAME: ${{ secrets.DAD_USERNAME }}
+          CYPRESS_DP: ${{ secrets.DAD_DPID }}
+          CYPRESS_PASSWORD: ${{ secrets.DAD_PASSWORD }}
+          CYPRESS_IPONUMBER: ${{ github.event.inputs.IPONUMBER }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      - name: Save screenshot
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshot
+          path: cypress/screenshots
+          retention-days: 10
+
+  Ipo_results_mom:
+    name: Mom
+    needs: [Ipo_results_dad]
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          spec: cypress/e2e/ipoResults.cy.js
+        env:
+          CYPRESS_USERNAME: ${{ secrets.MOM_USERNAME }}
+          CYPRESS_DP: ${{ secrets.MOM_DPID }}
+          CYPRESS_PASSWORD: ${{ secrets.MOM_PASSWORD }}
+          CYPRESS_IPONUMBER: ${{ github.event.inputs.IPONUMBER }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      - name: Save screenshot
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshot
+          path: cypress/screenshots
+          retention-days: 10

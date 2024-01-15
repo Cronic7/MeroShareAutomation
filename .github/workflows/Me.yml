@@ -1,0 +1,37 @@
+name: "Ipo results : Self"
+
+on:
+  workflow_dispatch:
+    inputs:
+      IPONUMBER:
+        description: Choose number of ipo result 
+        required: true
+        default: "10"
+        
+jobs:
+  Ipo_results:
+    name: Self
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          spec: cypress/e2e/ipoResults.cy.js
+        env:
+          CYPRESS_USERNAME: ${{ secrets.ME_USERNAME }}
+          CYPRESS_DP: ${{ secrets.ME_DP }}
+          CYPRESS_PASSWORD: ${{ secrets.ME_PASSWORD }}
+          CYPRESS_IPONUMBER: ${{ github.event.inputs.IPONUMBER }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      - name: Save screenshot
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshot
+          path: cypress/screenshots
+          retention-days: 10
+

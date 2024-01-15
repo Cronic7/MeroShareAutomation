@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "cypress": "^13.6.1"
+  },
+  "dependencies": {
+    "array2table": "^1.2.1",
+    "dotenv": "^16.3.1",
+    "nodemailer": "^6.9.8"
+  }
+}
