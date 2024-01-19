@@ -13,11 +13,17 @@ describe('Main', () => {
       ['Alloted','NOtAlloted'],
       [0,0],
     ]
+    const expiryDate=[
+      ['Meroshare','Dmat'],
+      ['0','0']
+    ]
+     
       cy.writeFile('cypress/fixtures/ipoData.txt',`\nUser Name: ${Cypress.env("USERNAME")}\n`,{ flag: 'a+' })
       cy.login(Cypress.env('DP'), Cypress.env('USERNAME'), Cypress.env('PASSWORD'))
         cy.get('li.nav-item').contains("My ASBA", {
           matchCase: false
         }).click();
+        
         cy.get('[class="nav-item"]').contains("Application Report").click()
          
         for(let i=0;i<Cypress.env("IPONUMBER");i++){
@@ -42,11 +48,10 @@ describe('Main', () => {
             console.log(ipoStatus)
             if(ipoStatus.trim()=="Alloted"){
               summary[1][0]+=1;
-              cy.log("if loop")
+              
             }else{
               summary[1][1]+=1;
-              cy.log('else loop')
-              cy.log(summary)
+              
             }
              
             cy.writeFile('cypress/fixtures/ipoData.txt', `IPO Status: ${ipoStatus.trim()}\n`, { flag: 'a+' }); // Append mode            
@@ -57,17 +62,34 @@ describe('Main', () => {
 
         })
       }
+      //get the expiry dates
+      cy.visit('https://meroshare.cdsc.com.np/#/ownProfile')
+      cy.get('[class="row info-box__expire-date"] [class="account-info__date"]').each((data,index)=>{
+        const text=data.text();
+        cy.log(index)
+         
+          expiryDate[1][index] = text;
+      
+    
+      })
+       
        
       cy.get('.header-menu__item--logout-desktop-view > .nav-link > .msi').click()
 
       cy.then(()=>{
-      cy.writeFile('cypress/fixtures/ipoData.txt','\n Summary \n' +table(summary) , { flag: 'a+' }); // Append mode      
+      cy.writeFile('cypress/fixtures/ipoData.txt','\nSummary: \n' +table(summary) , { flag: 'a+' }); // Append mode      
      
     })
+
+            
+            cy.then(()=>{
+              cy.writeFile('cypress/fixtures/ipoData.txt','\n \nExpiry Date: \n' +table(expiryDate) , { flag: 'a+' }); // Append mode      
+             
+            }) 
    
-  //Use cy.exec() with the constructed path
-cy.exec(`node  mailer.js`).its('code')
-.should('eq', 0); // Ensure the script executed successfully
+//   //Use cy.exec() with the constructed path
+// cy.exec(`node  mailer.js`).its('code')
+// .should('eq', 0); // Ensure the script executed successfully
   })
 })
  

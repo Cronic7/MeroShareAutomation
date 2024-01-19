@@ -13,6 +13,8 @@ Cypress.Commands.add('login',(DP,USERNAME,PASSWORD)=>{
 })
 })
 
+ 
+
 
 
 //Remove the contents of the text file
